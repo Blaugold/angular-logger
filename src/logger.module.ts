@@ -1,24 +1,36 @@
-import { NgModule, ModuleWithProviders, Type } from '@angular/core'
+import { NgModule, ModuleWithProviders, OpaqueToken, APP_INITIALIZER } from '@angular/core'
+import { LoggerDef, Logger } from './logger'
+import { LogService } from './log.service'
 
-import { LogServiceImpl, LogService } from './logger.service'
-import { LogBackendImpl, LogBackend } from './log-backend.service'
-import { LogConsumer, logConsumers } from './log-consumer.service'
+export const logConsumer = new OpaqueToken('Log Consumer')
+
+const getLogProvider = (logDef: LoggerDef) => ({
+  provide:    logDef,
+  useFactory: (logSvc) => new Logger(logSvc, logDef),
+  deps:       [LogService]
+})
+
+const defaultLogger = {
+  provide:    Logger,
+  useFactory: (logSvc) => new Logger(logSvc, new LoggerDef('')),
+  deps:       [LogService]
+}
 
 @NgModule()
 export class LoggerModule {
-  static forRoot(consumers: Type<LogConsumer>[] = []): ModuleWithProviders {
-    const consumerProviders = consumers.map(consumer => ({
-      provide: logConsumers, useClass: consumer, multi: true
-    }))
+  static forRoot(config: {
+    loggers?: LoggerDef[],
+  } = {}): ModuleWithProviders {
+    config.loggers = config.loggers || []
 
     return {
       ngModule:  LoggerModule,
       providers: [
-        LogServiceImpl,
-        { provide: LogService, useExisting: LogServiceImpl },
-        LogBackendImpl,
-        { provide: LogBackend, useExisting: LogBackendImpl },
-        ...consumerProviders
+        LogService,
+        defaultLogger,
+        ...config.loggers.map(getLogProvider),
+        { provide: APP_INITIALIZER, multi: true, useFactory: () => () => {}, deps: [logConsumer] },
+        { provide: logConsumer, multi: true, useValue: null }
       ]
     }
   }
