@@ -1,4 +1,9 @@
 ## Angular Logger
+[![CircleCI](https://circleci.com/gh/blaugold/angular-logger.svg?style=svg&circle-token=5343dadbd6986a309a2d1e9293ea52d8fd703e7e)](https://circleci.com/gh/blaugold/angular-logger)
+
+[![npm version](https://badge.fury.io/js/%40blaugold%2Fangular-logger.svg)](https://badge.fury.io/js/%40blaugold%2Fangular-logger)
+
+Logger for Angular 2 Apps.
 
 ## Installation
 ```
