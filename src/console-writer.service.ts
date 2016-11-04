@@ -1,5 +1,6 @@
-import { Injectable, Provider, OpaqueToken, Inject } from '@angular/core'
+import { Injectable, OpaqueToken, Inject, NgModule, ModuleWithProviders } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
+
 import { LogService } from './log.service'
 import { LogLevel, Log } from './log.model'
 import { logConsumer } from './logger.module'
@@ -10,7 +11,7 @@ export class ConsoleWriterConfig {
   constructor(config: {
     level: LogLevel
   } = {
-    level: LogLevel.Info
+    level: LogLevel.Log
   }) {
     this.level = config.level
   }
@@ -18,12 +19,18 @@ export class ConsoleWriterConfig {
 
 export const CONSOLE = new OpaqueToken('Console')
 
-export function provideConsoleWriter(config = new ConsoleWriterConfig()): Provider[] {
-  return [
-    { provide: logConsumer, useClass: ConsoleWriter, multi: true },
-    { provide: CONSOLE, useValue: global.console },
-    { provide: ConsoleWriterConfig, useValue: config }
-  ]
+@NgModule()
+export class ConsoleWriterModule {
+  static forRoot(config = new ConsoleWriterConfig()): ModuleWithProviders {
+    return {
+      ngModule: ConsoleWriterModule,
+      providers: [
+        { provide: logConsumer, useClass: ConsoleWriter, multi: true },
+        { provide: CONSOLE, useValue: global.console },
+        { provide: ConsoleWriterConfig, useValue: config }
+      ]
+    }
+  }
 }
 
 @Injectable()
@@ -36,7 +43,7 @@ export class ConsoleWriter {
               @Inject(CONSOLE) console: any,
               private config: ConsoleWriterConfig) {
     this.$logLevel = new BehaviorSubject<LogLevel>(this.config.level)
-    this.console = console as Console
+    this.console   = console as Console
 
     this.logService.$logEntries
       .skipWhile(log => log.level < this.$logLevel.getValue())
