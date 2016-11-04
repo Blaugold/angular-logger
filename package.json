@@ -1,6 +1,6 @@
 {
   "name": "@blaugold/angular-logger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Logger for Angular 2 Apps.",
   "keywords": [
     "Log",
@@ -15,7 +15,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "postinstall": "cpy karma-remap-istanbul-fix/index.js node_modules/karma-remap-istanbul",
+    "fix": "cpy karma-remap-istanbul-fix/index.js node_modules/karma-remap-istanbul",
     "karma": "karma start",
     "test": "npm run karma -- --single-run",
     "copy": "cpy package.json README.md release",
