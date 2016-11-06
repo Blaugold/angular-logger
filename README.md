@@ -17,7 +17,7 @@ Include the `LoggerModule` and the `ConsoleWriterModule` at the root module.
 ```typescript
 @NgModule({
     imports: [
-        LoggerModule.forRoot(),
+        LoggerModule.forStd(),
         ConsoleWriterModule.forRoot()
     ]
 })
@@ -42,7 +42,40 @@ export class MyService {
 To change the log level at which the logger emits logs, type in the console `logat.trace` to set
 the logger to log level `Trace` for example. Per default the logger is set to `Info`. You can also
 permanently change the log level:
-```
-    LoggerModule.forRoot({ stdLogger: new LoggerDef().level(LogLevel.Warn) })
+```typescript
+    LoggerModule.forStd(new LoggerDef().level(LogLevel.Warn))
 ```
 
+## Noop Logger
+
+When testing classes which use a logger, but you are not interested in what is logged,
+add `LoggerModule.forStd()` to the testing module. As long as there is no log consumer like the
+`ConsoleWriterModule` imported the `LoggerModule` will inject a noop logger for the `Logger` token.
+
+## Package Logger
+
+Packages which are included in other apps to provide some functionality can make use of aux loggers
+in their classes:
+
+```typescript
+    export const myPkgLogger = new LoggerDef('MyPkg')
+    
+    @Injectable()
+    export class MyService {
+        constructor(@Inject(myPkgLogger) log: Logger) {
+            log.info('MyService was instantiated')
+        }
+    }
+    
+    @NgModule({
+        imports: [
+            LoggerModule.forAux([myPkgLogger])
+        ]
+    })
+    export class MyPkgModule {
+    }
+```
+
+Consumers of this package can use `myPkgLogger` to set the log level of the package's logger.
+If the consuming app or package does not register a `LogConsumer` the classes are injected with
+a noop logger.

@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core'
 
 import { ConsoleWriterConfig, ConsoleWriter, CONSOLE } from './console-writer.service'
-import { logServiceProviders, logConsumer } from './log.service'
+import { logConsumer, logConsumerProviders } from './log-consumer'
 
 @NgModule()
 export class ConsoleWriterModule {
@@ -12,7 +12,7 @@ export class ConsoleWriterModule {
         { provide: logConsumer, useClass: ConsoleWriter, multi: true },
         { provide: CONSOLE, useValue: global.console },
         { provide: ConsoleWriterConfig, useValue: config },
-        logServiceProviders
+        logConsumerProviders
       ]
     }
   }

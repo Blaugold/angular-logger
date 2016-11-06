@@ -11,8 +11,8 @@ const getLogProvider = (logDef: LoggerDef, stdLogger: boolean = false) => ({
 @NgModule()
 export class LoggerModule {
 
-  static forStdLogger(stdLogger?: LoggerDef = new LoggerDef(''),
-                      logatOnWindow: boolean = true): ModuleWithProviders {
+  static forStd(stdLogger: LoggerDef = new LoggerDef(''),
+                logatOnWindow: boolean = true): ModuleWithProviders {
 
     if (logatOnWindow) {
       new ConsoleLogLevelSetter(stdLogger).putOnWindow('logat')
@@ -27,12 +27,12 @@ export class LoggerModule {
     }
   }
 
-  static forAuxLogger(auxLoggers: LoggerDef[]): ModuleWithProviders {
+  static forAux(auxLoggers: LoggerDef[]): ModuleWithProviders {
     return {
       ngModule:  LoggerModule,
       providers: [
         LoggerFactory,
-        auxLoggers.map(getLogProvider)
+        auxLoggers.map(loggerDef => getLogProvider(loggerDef))
       ]
     }
   }

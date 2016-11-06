@@ -14,8 +14,8 @@ describe('Logger', function () {
 
     TestBed.configureTestingModule({
       imports:   [
-        LoggerModule.forStdLogger(stdLoggerDef),
-        LoggerModule.forAuxLogger([auxLoggerDef])
+        LoggerModule.forStd(stdLoggerDef),
+        LoggerModule.forAux([auxLoggerDef])
       ],
       providers: [{ provide: logServiceV0, useValue: mockLogService }]
     })
