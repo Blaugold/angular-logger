@@ -2,15 +2,8 @@ import { NgModule, ModuleWithProviders } from '@angular/core'
 import { LoggerDef, Logger, ConsoleLogLevelSetter } from './logger.class'
 import { LoggerFactory } from './logger-factory.service'
 
-
-const getLogProvider = (logDef: LoggerDef) => ({
-  provide:    logDef,
-  useFactory: (loggerFactory: LoggerFactory) => loggerFactory.createLogger(logDef),
-  deps:       [LoggerFactory]
-})
-
-const getStdLoggerProvider = (logDef) => ({
-  provide:    Logger,
+const getLogProvider = (logDef: LoggerDef, stdLogger: boolean = false) => ({
+  provide:    stdLogger ? Logger : logDef,
   useFactory: (loggerFactory: LoggerFactory) => loggerFactory.createLogger(logDef),
   deps:       [LoggerFactory]
 })
@@ -18,27 +11,29 @@ const getStdLoggerProvider = (logDef) => ({
 @NgModule()
 export class LoggerModule {
 
-  static forRoot(config: {
-    stdLogger?: LoggerDef,
-    auxLoggers?: LoggerDef[],
-    logatOnWindow?: boolean
-  } = {}): ModuleWithProviders {
-    config.stdLogger   = config.stdLogger || new LoggerDef('')
-    config.auxLoggers  = config.auxLoggers || []
-    config.logatOnWindow = config.logatOnWindow || true
+  static forStdLogger(stdLogger?: LoggerDef = new LoggerDef(''),
+                      logatOnWindow: boolean = true): ModuleWithProviders {
 
-    if (config.logatOnWindow) {
-      new ConsoleLogLevelSetter(config.stdLogger).putOnWindow('logat')
+    if (logatOnWindow) {
+      new ConsoleLogLevelSetter(stdLogger).putOnWindow('logat')
     }
 
     return {
       ngModule:  LoggerModule,
       providers: [
         LoggerFactory,
-        getStdLoggerProvider(config.stdLogger),
-        config.auxLoggers.map(getLogProvider)
+        getLogProvider(stdLogger, true),
       ]
     }
   }
 
+  static forAuxLogger(auxLoggers: LoggerDef[]): ModuleWithProviders {
+    return {
+      ngModule:  LoggerModule,
+      providers: [
+        LoggerFactory,
+        auxLoggers.map(getLogProvider)
+      ]
+    }
+  }
 }

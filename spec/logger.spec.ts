@@ -1,4 +1,4 @@
-import { getTestBed, inject } from '@angular/core/testing'
+import { inject, TestBed } from '@angular/core/testing'
 import { LoggerModule, Logger, LoggerDef, Log, LogLevel, logServiceV0 } from '../'
 
 const auxLoggerDef = new LoggerDef('Aux')
@@ -12,12 +12,10 @@ describe('Logger', function () {
     mockLogService = { dispatchLog(log: Log) {} }
     spyOn(mockLogService, 'dispatchLog')
 
-    getTestBed().configureTestingModule({
+    TestBed.configureTestingModule({
       imports:   [
-        LoggerModule.forRoot({
-          stdLogger:  stdLoggerDef,
-          auxLoggers: [auxLoggerDef]
-        })
+        LoggerModule.forStdLogger(stdLoggerDef),
+        LoggerModule.forAuxLogger([auxLoggerDef])
       ],
       providers: [{ provide: logServiceV0, useValue: mockLogService }]
     })
