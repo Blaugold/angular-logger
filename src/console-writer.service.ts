@@ -39,23 +39,31 @@ export class ConsoleWriter {
 
     switch (log.level) {
       case LogLevel.Error:
-        this.console.error(log.message, ...log.customData)
+        this.console.error(this.getPrefix(log), ...log.args)
         break
       case LogLevel.Warn:
-        this.console.warn(log.message, ...log.customData)
+        this.console.warn(this.getPrefix(log), ...log.args)
         break
       case LogLevel.Info:
-        this.console.info(log.message, ...log.customData)
+        this.console.info(this.getPrefix(log), ...log.args)
         break
       case LogLevel.Debug:
-        this.console.debug(log.message, ...log.customData)
+        this.console.debug(this.getPrefix(log), ...log.args)
         break
       case LogLevel.Trace:
-        this.console.trace(log.message, ...log.customData)
+        this.console.trace(this.getPrefix(log), ...log.args)
         break
       case LogLevel.Log:
-        this.console.log(log.message, ...log.customData)
+        this.console.log(this.getPrefix(log), ...log.args)
         break
     }
+  }
+  
+  private getPrefix(log): string {
+    const name = log.poducer.getFullName()
+    if (name.length > 0) {
+      return name + ':'
+    }
+    return ''
   }
 }

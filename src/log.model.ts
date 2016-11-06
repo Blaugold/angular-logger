@@ -14,8 +14,7 @@ export class Log {
 
   constructor(public level: LogLevel,
               public poducer: LogProducer,
-              public message: string,
-              public customData: any) {
+              public args: any) {
     this.time = new Date()
   }
 }

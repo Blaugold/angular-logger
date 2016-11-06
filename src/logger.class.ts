@@ -32,17 +32,17 @@ export abstract class Logger implements LogProducer {
 
   abstract child(name: string): Logger
 
-  abstract log(message: string, ...optionalArgs: any[]): void
+  abstract log(...args: any[]): void
 
-  abstract trace(message: string, ...optionalArgs: any[]): void
+  abstract trace(...args: any[]): void
 
-  abstract debug(message: string, ...optionalArgs: any[]): void
+  abstract debug(...args: any[]): void
 
-  abstract info(message: string, ...optionalArgs: any[]): void
+  abstract info(...args: any[]): void
 
-  abstract warn(message: string, ...optionalArgs: any[]): void
+  abstract warn(...args: any[]): void
 
-  abstract error(message: string, ...optionalArgs: any[]): void
+  abstract error(...args: any[]): void
 }
 
 @Injectable()
@@ -77,39 +77,39 @@ export class LoggerImp implements Logger {
     return childLogger
   }
 
-  log(message: string, ...optionalArgs: any[]): void {
+  log(...args: any[]): void {
     if (this.def._level <= LogLevel.Log) {
-      this.logService.dispatchLog(new Log(LogLevel.Log, this, message, optionalArgs))
+      this.logService.dispatchLog(new Log(LogLevel.Log, this, args))
     }
   }
 
-  trace(message: string, ...optionalArgs: any[]): void {
+  trace(...args: any[]): void {
     if (this.def._level <= LogLevel.Trace) {
-      this.logService.dispatchLog(new Log(LogLevel.Trace, this, message, optionalArgs))
+      this.logService.dispatchLog(new Log(LogLevel.Trace, this, args))
     }
   }
 
-  debug(message: string, ...optionalArgs: any[]): void {
+  debug(...args: any[]): void {
     if (this.def._level <= LogLevel.Debug) {
-      this.logService.dispatchLog(new Log(LogLevel.Debug, this, message, optionalArgs))
+      this.logService.dispatchLog(new Log(LogLevel.Debug, this, args))
     }
   }
 
-  info(message: string, ...optionalArgs: any[]): void {
+  info(...args: any[]): void {
     if (this.def._level <= LogLevel.Info) {
-      this.logService.dispatchLog(new Log(LogLevel.Info, this, message, optionalArgs))
+      this.logService.dispatchLog(new Log(LogLevel.Info, this, args))
     }
   }
 
-  warn(message: string, ...optionalArgs: any[]): void {
+  warn(...args: any[]): void {
     if (this.def._level <= LogLevel.Warn) {
-      this.logService.dispatchLog(new Log(LogLevel.Warn, this, message, optionalArgs))
+      this.logService.dispatchLog(new Log(LogLevel.Warn, this, args))
     }
   }
 
-  error(message: string, ...optionalArgs: any[]): void {
+  error(...args: any[]): void {
     if (this.def._level <= LogLevel.Error) {
-      this.logService.dispatchLog(new Log(LogLevel.Error, this, message, optionalArgs))
+      this.logService.dispatchLog(new Log(LogLevel.Error, this, args))
     }
   }
 }
@@ -132,22 +132,22 @@ export class NoopLogger implements Logger {
     return new NoopLogger()
   }
 
-  log(message: string, ...optionalArgs): void {
+  log(...args): void {
   }
 
-  trace(message: string, ...optionalArgs): void {
+  trace(...args): void {
   }
 
-  debug(message: string, ...optionalArgs): void {
+  debug(...args): void {
   }
 
-  info(message: string, ...optionalArgs): void {
+  info(...args): void {
   }
 
-  warn(message: string, ...optionalArgs): void {
+  warn(...args): void {
   }
 
-  error(message: string, ...optionalArgs): void {
+  error(...args): void {
   }
 }
 
