@@ -1,8 +1,5 @@
 import { getTestBed, inject } from '@angular/core/testing'
-import { LoggerModule } from '../src/logger.module'
-import { Logger, LoggerDef } from '../src/logger'
-import { Log, LogLevel } from '../src/log.model'
-import { LogService } from '../src/log.service'
+import { LoggerModule, Logger, LoggerDef, Log, LogLevel, logServiceV0 } from '../'
 
 const auxLoggerDef = new LoggerDef('Aux')
 const stdLoggerDef = new LoggerDef('Std')
@@ -22,7 +19,7 @@ describe('Logger', function () {
           auxLoggers: [auxLoggerDef]
         })
       ],
-      providers: [{ provide: LogService, useValue: mockLogService }]
+      providers: [{ provide: logServiceV0, useValue: mockLogService }]
     })
   })
 

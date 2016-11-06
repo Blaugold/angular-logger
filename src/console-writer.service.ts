@@ -1,9 +1,8 @@
-import { Injectable, OpaqueToken, Inject, NgModule, ModuleWithProviders } from '@angular/core'
+import { Injectable, OpaqueToken, Inject } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 
-import { LogService } from './log.service'
+import { LogService, logServiceV0 } from './log.service'
 import { LogLevel, Log } from './log.model'
-import { logConsumer } from './logger.module'
 
 export class ConsoleWriterConfig {
   level: LogLevel
@@ -19,27 +18,13 @@ export class ConsoleWriterConfig {
 
 export const CONSOLE = new OpaqueToken('Console')
 
-@NgModule()
-export class ConsoleWriterModule {
-  static forRoot(config = new ConsoleWriterConfig()): ModuleWithProviders {
-    return {
-      ngModule: ConsoleWriterModule,
-      providers: [
-        { provide: logConsumer, useClass: ConsoleWriter, multi: true },
-        { provide: CONSOLE, useValue: global.console },
-        { provide: ConsoleWriterConfig, useValue: config }
-      ]
-    }
-  }
-}
-
 @Injectable()
 export class ConsoleWriter {
   $logLevel: BehaviorSubject<LogLevel>
 
   console: Console
 
-  constructor(private logService: LogService,
+  constructor(@Inject(logServiceV0) private logService: LogService,
               @Inject(CONSOLE) console: any,
               private config: ConsoleWriterConfig) {
     this.$logLevel = new BehaviorSubject<LogLevel>(this.config.level)

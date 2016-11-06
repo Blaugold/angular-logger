@@ -1,12 +1,10 @@
 import { getTestBed, inject } from '@angular/core/testing'
 
-import { LoggerModule, logConsumer } from '../src/logger.module'
-import { ConsoleWriterModule, ConsoleWriter } from '../src/console-writer.service'
+import { logConsumer, ConsoleWriter, ConsoleWriterModule } from '../'
 
 describe('Console Writer', function () {
   beforeEach(() => getTestBed().configureTestingModule({
     imports: [
-      LoggerModule.forRoot(),
       ConsoleWriterModule.forRoot()
     ],
   }))

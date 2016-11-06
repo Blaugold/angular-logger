@@ -23,8 +23,30 @@ export class LoggerDef {
   }
 }
 
+export abstract class Logger implements LogProducer {
+  abstract isRoot(): boolean
+
+  abstract getFullName(): string
+
+  abstract getName(): string
+
+  abstract child(name: string): Logger
+
+  abstract log(message: string, ...optionalArgs: any[]): void
+
+  abstract trace(message: string, ...optionalArgs: any[]): void
+
+  abstract debug(message: string, ...optionalArgs: any[]): void
+
+  abstract info(message: string, ...optionalArgs: any[]): void
+
+  abstract warn(message: string, ...optionalArgs: any[]): void
+
+  abstract error(message: string, ...optionalArgs: any[]): void
+}
+
 @Injectable()
-export class Logger implements LogProducer {
+export class LoggerImp implements Logger {
 
   private parent: Logger = null
 
@@ -50,7 +72,7 @@ export class Logger implements LogProducer {
 
   child(name: string): Logger {
     const childDef     = new LoggerDef(name).level(this.def._level)
-    const childLogger  = new Logger(this.logService, childDef)
+    const childLogger  = new LoggerImp(this.logService, childDef)
     childLogger.parent = this
     return childLogger
   }
@@ -89,6 +111,43 @@ export class Logger implements LogProducer {
     if (this.def._level <= LogLevel.Error) {
       this.logService.dispatchLog(new Log(LogLevel.Error, this, message, optionalArgs))
     }
+  }
+}
+
+export class NoopLogger implements Logger {
+
+  isRoot(): boolean {
+    return null
+  }
+
+  getFullName(): string {
+    return null
+  }
+
+  getName(): string {
+    return null
+  }
+
+  child(name: string): Logger {
+    return new NoopLogger()
+  }
+
+  log(message: string, ...optionalArgs): void {
+  }
+
+  trace(message: string, ...optionalArgs): void {
+  }
+
+  debug(message: string, ...optionalArgs): void {
+  }
+
+  info(message: string, ...optionalArgs): void {
+  }
+
+  warn(message: string, ...optionalArgs): void {
+  }
+
+  error(message: string, ...optionalArgs): void {
   }
 }
 

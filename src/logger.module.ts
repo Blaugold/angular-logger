@@ -1,19 +1,18 @@
-import { NgModule, ModuleWithProviders, OpaqueToken, APP_INITIALIZER } from '@angular/core'
-import { LoggerDef, Logger, ConsoleLogLevelSetter } from './logger'
-import { LogService } from './log.service'
+import { NgModule, ModuleWithProviders } from '@angular/core'
+import { LoggerDef, Logger, ConsoleLogLevelSetter } from './logger.class'
+import { LoggerFactory } from './logger-factory.service'
 
-export const logConsumer = new OpaqueToken('Log Consumer')
 
 const getLogProvider = (logDef: LoggerDef) => ({
   provide:    logDef,
-  useFactory: (logSvc) => new Logger(logSvc, logDef),
-  deps:       [LogService]
+  useFactory: (loggerFactory: LoggerFactory) => loggerFactory.createLogger(logDef),
+  deps:       [LoggerFactory]
 })
 
 const getStdLoggerProvider = (logDef) => ({
   provide:    Logger,
-  useFactory: (logSvc) => new Logger(logSvc, logDef),
-  deps:       [LogService]
+  useFactory: (loggerFactory: LoggerFactory) => loggerFactory.createLogger(logDef),
+  deps:       [LoggerFactory]
 })
 
 @NgModule()
@@ -35,11 +34,9 @@ export class LoggerModule {
     return {
       ngModule:  LoggerModule,
       providers: [
-        LogService,
+        LoggerFactory,
         getStdLoggerProvider(config.stdLogger),
-        ...config.auxLoggers.map(getLogProvider),
-        { provide: APP_INITIALIZER, multi: true, useFactory: () => () => {}, deps: [logConsumer] },
-        { provide: logConsumer, multi: true, useValue: null }
+        config.auxLoggers.map(getLogProvider)
       ]
     }
   }
